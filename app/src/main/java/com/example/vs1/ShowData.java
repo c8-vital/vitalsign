@@ -14,45 +14,47 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
-public class MainActivity extends AppCompatActivity {
+public class ShowData extends AppCompatActivity {
 
     Connection connection = null;
-    Button register;
-    EditText idText;
+    TextView tem;
+    TextView oxi;
+    Button query;
+    TextView showid;
+    private ResultSet rs = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        register = findViewById(R.id.register);
-        idText = findViewById(R.id.id);
-        register.setOnClickListener(v -> new Thread(new Runnable() {
+        setContentView(R.layout.activity_show_data);
+        query = findViewById(R.id.query);
+        tem = findViewById(R.id.tem);
+        oxi = findViewById(R.id.oxi);
+        showid = findViewById(R.id.showid);
+        //接收MainActivity的id
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("id");
+        showid.setText(id);
+        query.setOnClickListener(v -> new Thread(new Runnable() {
             @Override
             public void run() {
                 Looper.prepare();
-                String id = idText.getText().toString();
                 try {
                     //sql添加数据语句
-                    String sql = "CREATE TABLE if not exists `"+id+"` (\n" +
-                            "  `time` int (10) NOT NULL,\n" +
-                            "  `tem` double (3, 1) NULL,\n" +
-                            "  `oxi` double (3, 1) NULL\n" +
-                            ") ENGINE = innodb";
+                    String sql = "SELECT * FROM `"+id+"`";
                     if (!id.equals("")) {//判断输入框是否有数据
                         //4.获取用于向数据库发送sql语句的ps
                         connection = DBOpenHelper.getConn();
                         PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
-                        ps.executeUpdate();
-                        //传递id到下一页
-                        Intent intent = new Intent(MainActivity.this, ShowData.class);
-                        intent.putExtra("id", id);
-                        startActivity(intent);
-                    }
-                    else {
-                        Toast.makeText(MainActivity.this, "id不能为空", Toast.LENGTH_SHORT).show();
+//                        ps.setString(1, id);
+                        rs = ps.executeQuery();
+                        while (rs.next()) {
+                            tem.setText(rs.getString("tem"));
+                            oxi.setText(rs.getString("oxi"));
+                        }
+                    } else {
+                        Toast.makeText(ShowData.this, "id不能为空", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -62,7 +64,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start());
     }
-
-
-
 }
