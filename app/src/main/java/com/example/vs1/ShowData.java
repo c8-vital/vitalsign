@@ -1,10 +1,13 @@
 package com.example.vs1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -63,5 +66,23 @@ public class ShowData extends AppCompatActivity {
                 Looper.loop();
             }
         }).start());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.history:
+            Intent intent = new Intent(ShowData.this, HistoryData.class);
+            startActivity(intent);
+            break;
+            default:
+        }
+        return true;
     }
 }

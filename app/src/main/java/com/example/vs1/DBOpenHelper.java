@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBOpenHelper {
-    //要连接的数据库url,注意：此处连接的应该是服务器上的MySQl的地址
+    //要连接的数据库url,服务器上的MySQl的地址
     private static String url = "jdbc:mysql://sh-cynosdbmysql-grp-clwrjfde.sql.tencentcdb.com:26019/database";
     //连接数据库使用的用户名
     private static String userName = "root";

@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VS1">
-        <activity android:name=".ShowData"></activity>
+        <activity android:name=".HistoryData"></activity>
+        <activity android:name=".ShowData" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
