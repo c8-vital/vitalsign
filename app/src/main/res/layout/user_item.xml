@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/user_name"
+        android:id="@+id/user_data"
         android:layout_width="392dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -15,6 +15,6 @@
         android:layout_marginTop="10dp"
         android:text="ceshixinxi"
         android:textAlignment="center"
-        android:textSize="30sp"
+        android:textSize="14sp"
         tools:ignore="RtlCompat" /> />
 </LinearLayout>

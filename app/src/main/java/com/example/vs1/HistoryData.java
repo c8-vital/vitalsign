@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 
@@ -26,6 +27,7 @@ public class HistoryData extends AppCompatActivity {
     private PreparedStatement ps = null;
     ArrayList<User> list = new ArrayList<User>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,17 +45,22 @@ public class HistoryData extends AppCompatActivity {
             @Override
             public void run() {
                 Looper.prepare();
+                //接收ShowData的id
+                Intent intent2 = getIntent();
+                String idText = intent2.getStringExtra("idText");
                 try {
-                    String sql = "SELECT * FROM vital ORDER BY id DESC LIMIT 0,5";
+                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,5";
                     connection = DBOpenHelper.getConn();
                     ps = connection.prepareStatement(sql);
                     rs = ps.executeQuery();
                     if (rs != null) {
                         while (rs.next()){
-                            User u = new User(null, 0, 0);
-                            u.setId(rs.getString("id"));
-                            u.setTem(rs.getDouble("tem"));
-                            u.setOxi(rs.getDouble("oxi"));
+                            User u = new User(null, 0, 0, 0, null);
+                            u.setId(rs.getString("p_id"));
+                            u.setTem(rs.getDouble("temperature"));
+                            u.setOxi(rs.getDouble("oxygen_content"));
+                            u.setPul(rs.getDouble("pulse"));
+                            u.setTime(rs.getString("time"));
                             list.add(u);
                         }
                         UserAdapter adapter = new UserAdapter(list);

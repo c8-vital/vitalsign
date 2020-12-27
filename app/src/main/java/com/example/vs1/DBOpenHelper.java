@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class DBOpenHelper {
     //要连接的数据库url,服务器上的MySQl的地址
-    private static String url = "jdbc:mysql://sh-cynosdbmysql-grp-clwrjfde.sql.tencentcdb.com:26019/database";
+    private static String url = "jdbc:mysql://sh-cynosdbmysql-grp-clwrjfde.sql.tencentcdb.com:26019/patient_oxygen";
     //连接数据库使用的用户名
     private static String userName = "root";
     //连接的数据库时使用的密码

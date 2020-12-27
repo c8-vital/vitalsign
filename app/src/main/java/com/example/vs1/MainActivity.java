@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -33,23 +34,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Looper.prepare();
-                String id = idText.getText().toString();
+                Editable id = idText.getText();
+                String idText = id.toString();
                 try {
                     //sql添加数据语句
-                    String sql = "CREATE TABLE if not exists `"+id+"` (\n" +
-                            "  `time` int (10) NOT NULL,\n" +
-                            "  `tem` double (3, 1) NULL,\n" +
-                            "  `oxi` double (3, 1) NULL\n" +
-                            ") ENGINE = innodb";
+                    String sql = "INSERT IGNORE INTO `patient` VALUES ("+id+", 'name', 'male', '20', 'suzhou')";
                     if (!id.equals("")) {//判断输入框是否有数据
                         //4.获取用于向数据库发送sql语句的ps
                         connection = DBOpenHelper.getConn();
                         PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
                         ps.executeUpdate();
                         //传递id到下一页
-                        Intent intent = new Intent(MainActivity.this, ShowData.class);
-                        intent.putExtra("id", id);
-                        startActivity(intent);
+                        Intent intent1 = new Intent(MainActivity.this, ShowData.class);
+                        intent1.putExtra("idText", idText);
+                        startActivity(intent1);
                     }
                     else {
                         Toast.makeText(MainActivity.this, "id不能为空", Toast.LENGTH_SHORT).show();

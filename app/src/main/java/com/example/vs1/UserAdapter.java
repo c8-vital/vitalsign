@@ -1,5 +1,6 @@
 package com.example.vs1;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View userView;
-        TextView user_name;
+        TextView userData;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             userView = view;
-            user_name = itemView.findViewById(R.id.user_name);
+            userData = itemView.findViewById(R.id.user_data);
 
         }
     }
@@ -46,10 +47,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
         return holder;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = mUserList.get(position);
-        holder.user_name.setText("id:"+user.getId()+" tem:"+user.getTem()+" oxi:"+user.getOxi());
+        holder.userData.setText("id:" + user.getId() + user.getTime() + " tem:" + user.getTem() + " oxi:" + user.getOxi() + " pul:" + user.getPul());
     }
 
     @Override
