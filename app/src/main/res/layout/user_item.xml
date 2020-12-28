@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/user_data"
-        android:layout_width="392dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:text="ceshixinxi"
         android:textAlignment="center"
-        android:textSize="14sp"
+        android:textSize="18sp"
         tools:ignore="RtlCompat" /> />
 </LinearLayout>

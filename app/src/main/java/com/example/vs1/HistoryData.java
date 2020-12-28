@@ -36,7 +36,6 @@ public class HistoryData extends AppCompatActivity {
         historyData = findViewById(R.id.historyData);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         historyData.setLayoutManager(layoutManager);
-
     }
 
     private void initUser(){
@@ -49,7 +48,7 @@ public class HistoryData extends AppCompatActivity {
                 Intent intent2 = getIntent();
                 String idText = intent2.getStringExtra("idText");
                 try {
-                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,5";
+                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,20";
                     connection = DBOpenHelper.getConn();
                     ps = connection.prepareStatement(sql);
                     rs = ps.executeQuery();
