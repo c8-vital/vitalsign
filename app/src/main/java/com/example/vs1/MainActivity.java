@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.view.View;
@@ -14,14 +15,13 @@ import android.widget.Toast;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Connection connection = null;
     Button login;
     Button reg;
-    EditText idText;
+    EditText nameText;
     ResultSet rs;
 
     @Override
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         login = findViewById(R.id.login);
         reg = findViewById(R.id.reg);
-        idText = findViewById(R.id.id);
+        nameText = findViewById(R.id.name_login);
         login.setOnClickListener(this);
         reg.setOnClickListener(this);
     }
@@ -40,29 +40,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
-                Editable id = idText.getText();
-                String idText = id.toString();
+                String name = nameText.getText().toString();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         Looper.prepare();
                         try {
-                            String sql = "SELECT patient_id FROM patient WHERE patient_id=?";
-                            if (!idText.equals("")) {
+                            if (!nameText.equals("")) {//判断输入框中是否有数据
                                 connection = DBOpenHelper.getConn();
-                                PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
-                                ps.setString(1, idText);
-                                rs = ps.executeQuery();
-                                if (rs.next()) {
+                                if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
+                                    connection = DBOpenHelper.getConn();
+                                    //获取id
+                                    String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
+                                    rs = DBOpenHelper.getQuery(connection, sql);
+                                    String id = rs.getString("patient_id");
                                     //传递id到下一页
                                     Intent intent = new Intent(MainActivity.this, ShowData.class);
-                                    intent.putExtra("idText", idText);
+                                    intent.putExtra("idText", id);
                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this, "请先注册", Toast.LENGTH_LONG).show();
                                 }
                             } else {
-                                Toast.makeText(MainActivity.this, "id不能为空", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Name不能为空", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {
@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }).start();
                 break;
             case R.id.reg:
-                Intent intent1 = new Intent(MainActivity.this, Register.class);
-                startActivity(intent1);
+                Intent intent = new Intent(MainActivity.this, Register.class);
+                startActivity(intent);
                 break;
             default:
                 break;

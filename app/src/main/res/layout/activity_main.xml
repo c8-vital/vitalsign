@@ -29,14 +29,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/id"
+        android:id="@+id/name_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="78dp"
         android:layout_marginEnd="45dp"
         android:layout_marginRight="45dp"
         android:ems="10"
-        android:inputType="number"
+        android:inputType="date|textUri|textShortMessage|textLongMessage|textAutoCorrect|numberSigned|textVisiblePassword|textWebEditText|textMultiLine|textNoSuggestions|textFilter|number|datetime|textWebEmailAddress|textPersonName|text|textPhonetic|textCapSentences|textPassword|textAutoComplete|textImeMultiLine|textPostalAddress|numberDecimal|textEmailAddress|numberPassword|textCapWords|phone|textEmailSubject|textCapCharacters|time|textWebPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,9 +46,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
-        android:text="ID"
+        android:text="Name"
         android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="@+id/id"
-        app:layout_constraintEnd_toStartOf="@+id/id" />
+        app:layout_constraintBottom_toBottomOf="@+id/name_login"
+        app:layout_constraintEnd_toStartOf="@+id/name_login" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

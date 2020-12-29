@@ -2,6 +2,8 @@ package com.example.vs1;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class DBOpenHelper {
     //要连接的数据库url,服务器上的MySQl的地址
@@ -34,6 +36,38 @@ public class DBOpenHelper {
                 e.printStackTrace();
             }
         }
+    }
+//判断数据库中是否已经存在对应值
+    public static int getExit(Connection connection ,String patientType, String patientInfo){
+        ResultSet rs;
+        try {
+            String sql = "SELECT "+patientType+" FROM patient WHERE "+patientType+"=?";
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
+            ps.setString(1,patientInfo);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return 1;
+            } else {
+                return 2;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static ResultSet getQuery(Connection connection, String sql) {
+        ResultSet rs;
+        try {
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()){
+                return rs;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

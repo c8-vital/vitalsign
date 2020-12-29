@@ -8,25 +8,29 @@ import android.os.Looper;
 import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class Register extends AppCompatActivity {
     Connection connection = null;
     Button register;
     EditText nameText;
-    EditText id;
+    TextView id;
     EditText genderText;
     EditText ageText;
+    ResultSet rs;
+    ResultSet rs1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         register = findViewById(R.id.register);
-        id = findViewById(R.id.id_new);
+        id = findViewById(R.id.id_show);
         nameText = findViewById(R.id.name_new);
         genderText = findViewById(R.id.gender_new);
         ageText = findViewById(R.id.age_new);
@@ -34,26 +38,31 @@ public class Register extends AppCompatActivity {
             @Override
             public void run() {
                 Looper.prepare();
-                Editable idText = id.getText();
                 String name = nameText.getText().toString();
                 String gender = genderText.getText().toString();
-                Editable age = ageText.getText();
+                String age = ageText.getText().toString();
                 try {
-                    //sql添加数据语句
-                    String sql = "INSERT IGNORE INTO `patient` VALUES ("+idText+", '"+name+"', '"+gender+"', '"+age+"', 'suzhou')";
-                    if (!idText.toString().equals("")) {//判断输入框是否有数据
-                        //获取用于向数据库发送sql语句的ps
-                        connection = DBOpenHelper.getConn();
-                        PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
-                        ps.executeUpdate();
-                        Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
-                        //传递id到下一页
-//                        Intent intent = new Intent(Register.this, ShowData.class);
-//                        intent.putExtra("idText", idText);
-//                        startActivity(intent);
-                    }
-                    else {
-                        Toast.makeText(Register.this, "id不能为空", Toast.LENGTH_SHORT).show();
+                    connection = DBOpenHelper.getConn();
+                    if (DBOpenHelper.getExit(connection,"patient_name", name)==1){
+                        Toast.makeText(Register.this, "该姓名已存在", Toast.LENGTH_LONG).show();
+                    } else {
+                        String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age)\n" +
+                                "VALUES\n" +
+                                "( null, ?, ?, ?)";
+                        PreparedStatement ps1 = (PreparedStatement) connection.prepareStatement(sql1);
+                        ps1.setString(1, name);
+                        ps1.setString(2, gender);
+                        ps1.setString(3, age);
+                        ps1.executeUpdate();
+                        //sql添加数据语句
+                        if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
+                            Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
+                            String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
+                            rs1 = DBOpenHelper.getQuery(connection, sql);
+                            id.setText(rs1.getString("patient_id"));
+                        } else {
+                            Toast.makeText(Register.this, "注册失败", Toast.LENGTH_LONG).show();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
