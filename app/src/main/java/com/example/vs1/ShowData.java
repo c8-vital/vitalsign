@@ -26,11 +26,35 @@ public class ShowData extends AppCompatActivity {
     TextView tem;
     TextView oxi;
     TextView pul;
-    Button query;
     TextView showid;
     TextView time;
     TextView name;
     private ResultSet rs = null;
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    //显示数据
+                    try {
+                        tem.setText(rs.getString("temperature"));
+                        oxi.setText(rs.getString("oxygen_content"));
+                        pul.setText(rs.getString("pulse"));
+                        time.setText(rs.getString("time"));
+                        name.setText(rs.getString("patient_name"));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -38,7 +62,6 @@ public class ShowData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_data);
 
-        query = findViewById(R.id.query);
         tem = findViewById(R.id.tem);
         oxi = findViewById(R.id.oxi);
         pul = findViewById(R.id.pul);
@@ -52,7 +75,11 @@ public class ShowData extends AppCompatActivity {
         showid.setText(id);
 
         ShowData();
-        query.setOnClickListener(v -> ShowData());
+        DBOpenHelper.closeAll(connection);
+//
+//        System.out.println(tem.getText().toString());
+//        emptyData(tem);
+
     }
 
     public void ShowData(){
@@ -64,17 +91,17 @@ public class ShowData extends AppCompatActivity {
                     connection = DBOpenHelper.getConn();
                     String id = showid.getText().toString();
                     String sql = "SELECT * FROM patient_"+id+" a, patient b WHERE a.p_id = b.patient_id ORDER BY time DESC";
-                        rs = DBOpenHelper.getQuery(connection, sql);
-                        //显示数据
-                        tem.setText(rs.getString("temperature"));
-                        oxi.setText(rs.getString("oxygen_content"));
-                        pul.setText(rs.getString("pulse"));
-                        time.setText(rs.getString("time"));
-                        name.setText(rs.getString("patient_name"));
+                    rs = DBOpenHelper.getQuery(connection, sql);
+                    if (rs == null) {//判断是否存在patient_id表
+                        Toast.makeText(ShowData.this, "暂无数据", Toast.LENGTH_LONG).show();
+                    } else {
+                        Message msg = new Message();
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                DBOpenHelper.closeAll(connection);
                 Looper.loop();
             }
         }).start();
@@ -96,9 +123,16 @@ public class ShowData extends AppCompatActivity {
                 Intent intent = new Intent(ShowData.this, HistoryData.class);
                 intent.putExtra("idText", idText);
                 startActivity(intent);
-            break;
+                break;
             default:
+                break;
         }
         return true;
     }
+
+//    public void emptyData(TextView id) {
+//        if (id.getText().toString().equals("")) {
+//            id.setText("无数据");
+//        }
+//    }
 }

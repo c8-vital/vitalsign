@@ -1,17 +1,21 @@
 package com.example.vs1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 
+import android.os.Message;
 import android.service.autofill.UserData;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +30,17 @@ public class HistoryData extends AppCompatActivity {
     private ResultSet rs = null;
     private PreparedStatement ps = null;
     ArrayList<User> list = new ArrayList<User>();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    UserAdapter adapter = new UserAdapter(list);
+                    historyData.setAdapter(adapter);
+            }
+        }
+    };
 
 
     @Override
@@ -48,7 +63,7 @@ public class HistoryData extends AppCompatActivity {
                 Intent intent2 = getIntent();
                 String idText = intent2.getStringExtra("idText");
                 try {
-                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,20";
+                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,50";
                     connection = DBOpenHelper.getConn();
                     ps = connection.prepareStatement(sql);
                     rs = ps.executeQuery();
@@ -62,8 +77,11 @@ public class HistoryData extends AppCompatActivity {
                             u.setTime(rs.getString("time"));
                             list.add(u);
                         }
-                        UserAdapter adapter = new UserAdapter(list);
-                        historyData.setAdapter(adapter);
+                        Message msg = new Message();
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    } else {
+                        Toast.makeText(HistoryData.this, "无数据", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

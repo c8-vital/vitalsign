@@ -1,10 +1,13 @@
 package com.example.vs1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +17,7 @@ import android.widget.Toast;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Register extends AppCompatActivity {
     Connection connection = null;
@@ -24,6 +28,20 @@ public class Register extends AppCompatActivity {
     EditText ageText;
     ResultSet rs;
     ResultSet rs1;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    try {
+                        id.setText(rs1.getString("patient_id"));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +77,10 @@ public class Register extends AppCompatActivity {
                             Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
                             String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
                             rs1 = DBOpenHelper.getQuery(connection, sql);
-                            id.setText(rs1.getString("patient_id"));
+                            Message msg = new Message();
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+//                            id.setText(rs1.getString("patient_id"));
                         } else {
                             Toast.makeText(Register.this, "注册失败", Toast.LENGTH_LONG).show();
                         }
@@ -67,10 +88,10 @@ public class Register extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                DBOpenHelper.closeAll(connection);
+
                 Looper.loop();
             }
         }).start());
-
+        DBOpenHelper.closeAll(connection);
     }
 }
