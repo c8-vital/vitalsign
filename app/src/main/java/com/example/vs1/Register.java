@@ -9,8 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ public class Register extends AppCompatActivity {
     EditText ageText;
     ResultSet rs;
     ResultSet rs1;
+    ProgressBar progressBar;
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -39,6 +43,14 @@ public class Register extends AppCompatActivity {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case 11:
+                    progressBar.setVisibility(View.VISIBLE);
+                    break;
+                case 12:
+                    progressBar.setVisibility(View.GONE);
+                default:
+                    break;
             }
         }
     };
@@ -52,6 +64,8 @@ public class Register extends AppCompatActivity {
         nameText = findViewById(R.id.name_new);
         genderText = findViewById(R.id.gender_new);
         ageText = findViewById(R.id.age_new);
+        progressBar = findViewById(R.id.progressBar_register);
+        progressBar.setVisibility(View.GONE);
         register.setOnClickListener(v -> new Thread(new Runnable() {
             @Override
             public void run() {
@@ -59,36 +73,38 @@ public class Register extends AppCompatActivity {
                 String name = nameText.getText().toString();
                 String gender = genderText.getText().toString();
                 String age = ageText.getText().toString();
-                try {
-                    connection = DBOpenHelper.getConn();
-                    if (DBOpenHelper.getExit(connection,"patient_name", name)==1){
-                        Toast.makeText(Register.this, "该姓名已存在", Toast.LENGTH_LONG).show();
-                    } else {
-                        String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age)\n" +
-                                "VALUES\n" +
-                                "( null, ?, ?, ?)";
-                        PreparedStatement ps1 = (PreparedStatement) connection.prepareStatement(sql1);
-                        ps1.setString(1, name);
-                        ps1.setString(2, gender);
-                        ps1.setString(3, age);
-                        ps1.executeUpdate();
-                        //sql添加数据语句
-                        if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
-                            Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
-                            String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
-                            rs1 = DBOpenHelper.getQuery(connection, sql);
-                            Message msg = new Message();
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-//                            id.setText(rs1.getString("patient_id"));
+                if (name.equals("")) {
+                    Toast.makeText(Register.this, "请输入姓名", Toast.LENGTH_LONG).show();
+                } else {
+                    try {
+                        handler.sendEmptyMessage(11);
+                        connection = DBOpenHelper.getConn();
+                        if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
+                            Toast.makeText(Register.this, "该姓名已存在", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(Register.this, "注册失败", Toast.LENGTH_LONG).show();
+                            String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age)\n" +
+                                    "VALUES\n" +
+                                    "( null, ?, ?, ?)";
+                            PreparedStatement ps1 = (PreparedStatement) connection.prepareStatement(sql1);
+                            ps1.setString(1, name);
+                            ps1.setString(2, gender);
+                            ps1.setString(3, age);
+                            ps1.executeUpdate();
+                            //sql添加数据语句
+                            if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
+                                Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
+                                String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
+                                rs1 = DBOpenHelper.getQuery(connection, sql);
+                                handler.sendEmptyMessage(1);
+                            } else {
+                                Toast.makeText(Register.this, "注册失败", Toast.LENGTH_LONG).show();
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-
+                handler.sendEmptyMessage(12);
                 Looper.loop();
             }
         }).start());

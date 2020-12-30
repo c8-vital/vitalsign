@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class ShowData extends AppCompatActivity {
     TextView time;
     TextView name;
     private ResultSet rs = null;
+    private boolean run = false;
 
 
     private Handler handler = new Handler() {
@@ -48,7 +50,6 @@ public class ShowData extends AppCompatActivity {
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-
                     break;
                 default:
                     break;
@@ -74,11 +75,9 @@ public class ShowData extends AppCompatActivity {
         String id = intent.getStringExtra("idText");
         showid.setText(id);
 
-        ShowData();
-        DBOpenHelper.closeAll(connection);
-//
-//        System.out.println(tem.getText().toString());
-//        emptyData(tem);
+        //实现定时刷新
+        run = true;
+        handler.postDelayed(task, 1000/10);
 
     }
 
@@ -95,9 +94,7 @@ public class ShowData extends AppCompatActivity {
                     if (rs == null) {//判断是否存在patient_id表
                         Toast.makeText(ShowData.this, "暂无数据", Toast.LENGTH_LONG).show();
                     } else {
-                        Message msg = new Message();
-                        msg.what = 1;
-                        handler.sendMessage(msg);
+                        handler.sendEmptyMessage(1);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -129,6 +126,18 @@ public class ShowData extends AppCompatActivity {
         }
         return true;
     }
+
+    //定时刷新，10s
+    private final Runnable task = new Runnable() {
+        @Override
+        public void run() {
+            if (run) {
+                ShowData();
+                DBOpenHelper.closeAll(connection);
+                handler.postDelayed(this, 1000*10);
+            }
+        }
+    };
 
 //    public void emptyData(TextView id) {
 //        if (id.getText().toString().equals("")) {

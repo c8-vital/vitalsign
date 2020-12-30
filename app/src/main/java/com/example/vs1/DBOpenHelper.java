@@ -1,5 +1,7 @@
 package com.example.vs1;
 
+import android.widget.ProgressBar;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -69,5 +71,6 @@ public class DBOpenHelper {
         }
         return null;
     }
+
 
 }

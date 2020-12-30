@@ -1,19 +1,20 @@
 package com.example.vs1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button reg;
     EditText nameText;
     ResultSet rs;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login = findViewById(R.id.login);
         reg = findViewById(R.id.reg);
         nameText = findViewById(R.id.name_login);
+        progressBar = findViewById(R.id.progressBar_main);
+        progressBar.setVisibility(View.GONE);
+
         login.setOnClickListener(this);
         reg.setOnClickListener(this);
     }
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Looper.prepare();
                         try {
                             if (!nameText.equals("")) {//判断输入框中是否有数据
+                                handler.sendEmptyMessage(11);
                                 connection = DBOpenHelper.getConn();
                                 if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
                                     connection = DBOpenHelper.getConn();
@@ -64,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             } else {
                                 Toast.makeText(MainActivity.this, "Name不能为空", Toast.LENGTH_SHORT).show();
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        handler.sendEmptyMessage(12);
                         DBOpenHelper.closeAll(connection);
                         Looper.loop();
                     }
@@ -81,4 +87,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 11:
+                    progressBar.setVisibility(View.VISIBLE);
+                    break;
+                case 12:
+                    progressBar.setVisibility(View.GONE);
+                default:
+                    break;
+            }
+        }
+    };
 }

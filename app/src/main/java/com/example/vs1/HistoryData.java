@@ -12,6 +12,7 @@ import android.os.Looper;
 
 import android.os.Message;
 import android.service.autofill.UserData;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +31,8 @@ public class HistoryData extends AppCompatActivity {
     private ResultSet rs = null;
     private PreparedStatement ps = null;
     ArrayList<User> list = new ArrayList<User>();
+
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -38,6 +41,9 @@ public class HistoryData extends AppCompatActivity {
                 case 1:
                     UserAdapter adapter = new UserAdapter(list);
                     historyData.setAdapter(adapter);
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -77,9 +83,7 @@ public class HistoryData extends AppCompatActivity {
                             u.setTime(rs.getString("time"));
                             list.add(u);
                         }
-                        Message msg = new Message();
-                        msg.what = 1;
-                        handler.sendMessage(msg);
+                        handler.sendEmptyMessage(1);
                     } else {
                         Toast.makeText(HistoryData.this, "无数据", Toast.LENGTH_LONG).show();
                     }
