@@ -42,9 +42,9 @@ public class ShowData extends AppCompatActivity {
                 case 1:
                     //显示数据
                     try {
-                        tem.setText(rs.getString("temperature"));
-                        oxi.setText(rs.getString("oxygen_content"));
-                        pul.setText(rs.getString("pulse"));
+                        tem.setText(rs.getString("temperature")+" ℃");
+                        oxi.setText(rs.getString("oxygen_content")+" %");
+                        pul.setText(rs.getString("pulse")+" bpm");
                         time.setText(rs.getString("time"));
                         name.setText(rs.getString("patient_name"));
                     } catch (SQLException e) {
@@ -92,7 +92,8 @@ public class ShowData extends AppCompatActivity {
                     String sql = "SELECT * FROM patient_"+id+" a, patient b WHERE a.p_id = b.patient_id ORDER BY time DESC";
                     rs = DBOpenHelper.getQuery(connection, sql);
                     if (rs == null) {//判断是否存在patient_id表
-                        Toast.makeText(ShowData.this, "暂无数据", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(ShowData.this, "No data available", Toast.LENGTH_LONG).show();
+                        System.out.println("No data available");
                     } else {
                         handler.sendEmptyMessage(1);
                     }
@@ -134,7 +135,7 @@ public class ShowData extends AppCompatActivity {
             if (run) {
                 ShowData();
                 DBOpenHelper.closeAll(connection);
-                handler.postDelayed(this, 1000*10);
+                handler.postDelayed(this, 1000*5);
             }
         }
     };

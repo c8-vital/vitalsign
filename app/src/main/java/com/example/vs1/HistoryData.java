@@ -85,7 +85,7 @@ public class HistoryData extends AppCompatActivity {
                         }
                         handler.sendEmptyMessage(1);
                     } else {
-                        Toast.makeText(HistoryData.this, "无数据", Toast.LENGTH_LONG).show();
+                        Toast.makeText(HistoryData.this, "No data available", Toast.LENGTH_LONG).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

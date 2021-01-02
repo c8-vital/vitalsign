@@ -65,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     intent.putExtra("idText", id);
                                     startActivity(intent);
                                 } else {
-                                    Toast.makeText(MainActivity.this, "请先注册", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "Please register first", Toast.LENGTH_LONG).show();
                                 }
                             } else {
-                                Toast.makeText(MainActivity.this, "Name不能为空", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

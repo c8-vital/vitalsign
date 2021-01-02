@@ -5,5 +5,5 @@
 
     <item
         android:id="@+id/history"
-        android:title="历史数据" />
+        android:title="History Data" />
 </menu>

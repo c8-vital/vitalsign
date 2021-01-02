@@ -51,7 +51,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = mUserList.get(position);
-        holder.userData.setText(user.getTime().substring(10, 19) +"  \t  \t  \t  \t  \t  \t  \t"+ user.getTem() +"          "+ user.getOxi() +"         "+ user.getPul());
+        holder.userData.setText(user.getTime().substring(10, 19) +"   "+ user.getTem() +"   "+ user.getOxi() +"   "+ user.getPul());
     }
 
     @Override

@@ -74,13 +74,13 @@ public class Register extends AppCompatActivity {
                 String gender = genderText.getText().toString();
                 String age = ageText.getText().toString();
                 if (name.equals("")) {
-                    Toast.makeText(Register.this, "请输入姓名", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Register.this, "Please enter your name", Toast.LENGTH_LONG).show();
                 } else {
                     try {
                         handler.sendEmptyMessage(11);
                         connection = DBOpenHelper.getConn();
                         if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
-                            Toast.makeText(Register.this, "该姓名已存在", Toast.LENGTH_LONG).show();
+                            Toast.makeText(Register.this, "The name already exists", Toast.LENGTH_LONG).show();
                         } else {
                             String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age)\n" +
                                     "VALUES\n" +
@@ -92,12 +92,12 @@ public class Register extends AppCompatActivity {
                             ps1.executeUpdate();
                             //sql添加数据语句
                             if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
-                                Toast.makeText(Register.this, "注册成功", Toast.LENGTH_LONG).show();
+                                Toast.makeText(Register.this, "Registration success", Toast.LENGTH_LONG).show();
                                 String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
                                 rs1 = DBOpenHelper.getQuery(connection, sql);
                                 handler.sendEmptyMessage(1);
                             } else {
-                                Toast.makeText(Register.this, "注册失败", Toast.LENGTH_LONG).show();
+                                Toast.makeText(Register.this, "Registration failed", Toast.LENGTH_LONG).show();
                             }
                         }
                     } catch (Exception e) {
