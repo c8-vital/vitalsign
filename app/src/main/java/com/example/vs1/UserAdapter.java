@@ -11,18 +11,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private ArrayList<User> mUserList;
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View userView;
-        TextView userData;
+        TextView userTime;
+        TextView userTem;
+        TextView userOxi;
+        TextView userPul;
 
         public ViewHolder(@NonNull View view) {
             super(view);
             userView = view;
-            userData = itemView.findViewById(R.id.user_data);
+            userTime = itemView.findViewById(R.id.user_time);
+            userTem = itemView.findViewById(R.id.user_tem);
+            userOxi = itemView.findViewById(R.id.user_oxi);
+            userPul = itemView.findViewById(R.id.user_pul);
 
         }
     }
@@ -51,7 +58,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = mUserList.get(position);
-        holder.userData.setText(user.getTime().substring(10, 19) +"   "+ user.getTem() +"   "+ user.getOxi() +"   "+ user.getPul());
+        holder.userTime.setText(user.getTime());
+        holder.userTem.setText(user.getTem());
+        holder.userOxi.setText(user.getOxi());
+        holder.userPul.setText(user.getPul());
     }
 
     @Override

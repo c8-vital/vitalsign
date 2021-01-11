@@ -75,11 +75,11 @@ public class HistoryData extends AppCompatActivity {
                     rs = ps.executeQuery();
                     if (rs != null) {
                         while (rs.next()){
-                            User u = new User(null, 0, 0, 0, null);
+                            User u = new User(null, "00", null, null, null);
                             u.setId(rs.getString("p_id"));
-                            u.setTem(rs.getDouble("temperature"));
-                            u.setOxi(rs.getDouble("oxygen_content"));
-                            u.setPul(rs.getDouble("pulse"));
+                            u.setTem(rs.getString("temperature"));
+                            u.setOxi(rs.getString("oxygen_content"));
+                            u.setPul(rs.getString("pulse"));
                             u.setTime(rs.getString("time"));
                             list.add(u);
                         }

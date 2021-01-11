@@ -2,12 +2,12 @@ package com.example.vs1;
 
 public class User {
     private String id;
-    private double tem;
-    private double oxi;
-    private double pul;
+    private String tem;
+    private String oxi;
+    private String pul;
     private String time;
 
-    public User(String id, double tem, double oxi, double pul, String time) {
+    public User(String id, String tem, String oxi, String pul, String time) {
         this.id = id;
         this.tem = tem;
         this.oxi = oxi;
@@ -19,15 +19,15 @@ public class User {
         return id;
     }
 
-    public double getTem() {
+    public String getTem() {
         return tem;
     }
 
-    public double getOxi() {
+    public String getOxi() {
         return oxi;
     }
 
-    public double getPul() {
+    public String getPul() {
         return pul;
     }
 
@@ -39,15 +39,15 @@ public class User {
         this.id = id;
     }
 
-    public void setTem(double tem) {
+    public void setTem(String tem) {
         this.tem = tem;
     }
 
-    public void setOxi(double oxi) {
+    public void setOxi(String oxi) {
         this.oxi = oxi;
     }
 
-    public void setPul(double pul) {
+    public void setPul(String pul) {
         this.pul = pul;
     }
 

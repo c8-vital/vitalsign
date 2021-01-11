@@ -7,14 +7,51 @@
 
 
     <TextView
-        android:id="@+id/user_data"
-        android:layout_width="wrap_content"
+        android:id="@+id/user_time"
+        android:layout_width="172dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:text="ceshixinxi"
+        android:text="2021-00-00 00:00:00"
         android:textAlignment="center"
         android:textSize="18sp"
-        tools:ignore="RtlCompat" /> />
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/user_tem"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="00"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/user_oxi"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="00"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/user_pul"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="00"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        tools:ignore="RtlCompat" />
+    />
 </LinearLayout>
