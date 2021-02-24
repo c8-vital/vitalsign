@@ -1,23 +1,25 @@
 package com.example.vs1;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -30,9 +32,11 @@ public class ShowData extends AppCompatActivity {
     TextView showid;
     TextView time;
     TextView name;
+    String temperature;
+    String oximeter;
+    String pulse;
     private ResultSet rs = null;
-    private boolean run = false;
-
+    private boolean run = true;
 
     private Handler handler = new Handler() {
         @Override
@@ -42,9 +46,9 @@ public class ShowData extends AppCompatActivity {
                 case 1:
                     //显示数据
                     try {
-                        tem.setText(rs.getString("temperature")+" ℃");
-                        oxi.setText(rs.getString("oxygen_content")+" %");
-                        pul.setText(rs.getString("pulse")+" bpm");
+                        tem.setText(rs.getString("temperature") + " ℃");
+                        oxi.setText(rs.getString("oxygen_content") + " %");
+                        pul.setText(rs.getString("pulse") + " bpm");
                         time.setText(rs.getString("time"));
                         name.setText(rs.getString("patient_name"));
                     } catch (SQLException e) {
@@ -74,15 +78,35 @@ public class ShowData extends AppCompatActivity {
         Intent intent = getIntent();
         String id = intent.getStringExtra("idText");
         showid.setText(id);
+        CheckData();
+        //检查数据是否异常
 
-        //实现定时刷新
-        run = true;
-        handler.postDelayed(task, 1000/10);
-
+        handler.postDelayed(task, 1000 / 10);
     }
 
-    public void ShowData(){
+//    public void ShowData(){
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+//                try {
+//                    connection = DBOpenHelper.getConn();
+//                    String id = showid.getText().toString();
+//                    String sql = "SELECT * FROM patient_"+id+" a, patient b WHERE a.p_id = b.patient_id ORDER BY time DESC";
+//                    rs = DBOpenHelper.getQuery(connection, sql);
+//                    handler.sendEmptyMessage(1);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Looper.loop();
+//            }
+//        }).start();
+//    }
+
+    //血氧异常通知
+    public void CheckData(){
         new Thread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
                 Looper.prepare();
@@ -92,10 +116,37 @@ public class ShowData extends AppCompatActivity {
                     String sql = "SELECT * FROM patient_"+id+" a, patient b WHERE a.p_id = b.patient_id ORDER BY time DESC";
                     rs = DBOpenHelper.getQuery(connection, sql);
                     if (rs == null) {//判断是否存在patient_id表
-//                        Toast.makeText(ShowData.this, "No data available", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ShowData.this, "No data available", Toast.LENGTH_LONG).show();
                         System.out.println("No data available");
                     } else {
                         handler.sendEmptyMessage(1);
+                        temperature = rs.getString("temperature");
+                        oximeter = rs.getString("oxygen_content");
+                        pulse = rs.getString("pulse");
+                        if (Double.parseDouble(oximeter) < 95) {
+                            run = false;
+                            Intent intent1 = new Intent(ShowData.this, NotificationActivity.class);
+                            intent1.putExtra("temperature" ,temperature);
+                            intent1.putExtra("oximeter", oximeter);
+                            intent1.putExtra("pulse", pulse);
+//                            PendingIntent pi = PendingIntent.getActivity(ShowData.this, 0, intent1, 0);
+                            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                            Notification notification;
+                            NotificationChannel channel = new NotificationChannel("1", "description", NotificationManager.IMPORTANCE_HIGH);
+                            manager.createNotificationChannel(channel);
+                            notification = new Notification.Builder(ShowData.this, "1")
+                                    .setCategory(Notification.CATEGORY_MESSAGE)
+                                    .setSmallIcon(R.drawable.ic_launcher_background)
+                                    .setContentTitle("Data exception warning")
+                                    .setContentText("Blood oxygen saturation is too low, please contact medical staff in time.")
+                                    .setWhen(System.currentTimeMillis())
+                                    .setVibrate(new long[]{0, 1000, 1000, 1000})
+                                    .setAutoCancel(true)
+//                                    .setContentIntent(pi)
+                                    .build();
+                            manager.notify(1, notification);
+                            startActivity(intent1);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -128,12 +179,12 @@ public class ShowData extends AppCompatActivity {
         return true;
     }
 
-    //定时刷新，10s
+    //定时刷新，5s
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
             if (run) {
-                ShowData();
+                CheckData();
                 DBOpenHelper.closeAll(connection);
                 handler.postDelayed(this, 1000*5);
             }

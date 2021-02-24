@@ -48,7 +48,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             @Override
             public void onClick(View v) {
                 User user = mUserList.get(holder.getAdapterPosition());
-                Toast.makeText(v.getContext(), "111", Toast.LENGTH_LONG).show();
+//                Toast.makeText(v.getContext(), "111", Toast.LENGTH_LONG).show();
             }
         });
         return holder;

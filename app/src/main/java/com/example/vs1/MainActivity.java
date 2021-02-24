@@ -1,9 +1,16 @@
 package com.example.vs1;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media.app.NotificationCompat;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +37,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //隐藏系统默认标题
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null){
+//            actionBar.hide();
+//        }
+
         login = findViewById(R.id.login);
         reg = findViewById(R.id.reg);
         nameText = findViewById(R.id.name_login);
@@ -47,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.login:
                 String name = nameText.getText().toString();
                 new Thread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void run() {
                         Looper.prepare();
