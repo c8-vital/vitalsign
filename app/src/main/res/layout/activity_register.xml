@@ -6,22 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".Register">
 
+    <EditText
+        android:id="@+id/number_new"
+        android:layout_width="164dp"
+        android:layout_height="42dp"
+        android:ems="10"
+        android:hint="Contact number"
+        android:inputType="number|text"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.118"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/textView2" />
+
     <ProgressBar
         android:id="@+id/progressBar_register"
         style="?android:attr/progressBarStyle"
         android:layout_width="67dp"
         android:layout_height="70dp"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
-        android:layout_marginTop="344dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.458" />
 
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="100dp"
         android:text="Your ID"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/textView14"
@@ -35,6 +48,8 @@
         android:layout_marginLeft="64dp"
         android:text="000"
         android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.181"
         app:layout_constraintStart_toEndOf="@+id/textView10"
         app:layout_constraintTop_toTopOf="@+id/textView10" />
 
@@ -42,24 +57,22 @@
         android:id="@+id/age_new"
         android:layout_width="164dp"
         android:layout_height="42dp"
-        android:layout_marginStart="76dp"
-        android:layout_marginLeft="76dp"
         android:ems="10"
         android:hint="age"
         android:inputType="number|text"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView14"
+        app:layout_constraintStart_toStartOf="@+id/gender_new"
         app:layout_constraintTop_toTopOf="@+id/textView14" />
 
     <TextView
         android:id="@+id/textView12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="88dp"
-        android:text="name"
+        android:layout_marginTop="72dp"
+        android:text="Name"
         android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="gender"
+        android:text="Gender"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/textView12"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
@@ -77,13 +90,11 @@
         android:id="@+id/gender_new"
         android:layout_width="164dp"
         android:layout_height="42dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
         android:ems="10"
         android:hint="gender"
         android:inputType="date|textUri|textShortMessage|textLongMessage|textAutoCorrect|numberSigned|textVisiblePassword|textWebEditText|textMultiLine|textNoSuggestions|textFilter|number|datetime|textWebEmailAddress|textPersonName|text|textPhonetic|textCapSentences|textPassword|textAutoComplete|textImeMultiLine|textPostalAddress|numberDecimal|textEmailAddress|numberPassword|textCapWords|phone|textEmailSubject|textCapCharacters|time|textWebPassword"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/textView13"
+        app:layout_constraintStart_toStartOf="@+id/name_new"
         app:layout_constraintTop_toTopOf="@+id/textView13" />
 
     <TextView
@@ -91,10 +102,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="age"
+        android:text="Age"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/textView13"
         app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:text="Contact number"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <EditText
         android:id="@+id/name_new"
@@ -106,6 +129,8 @@
         android:hint="name"
         android:inputType="date|textUri|textShortMessage|textLongMessage|textAutoCorrect|numberSigned|textVisiblePassword|textWebEditText|textMultiLine|textNoSuggestions|textFilter|number|datetime|textWebEmailAddress|textPersonName|text|textPhonetic|textCapSentences|textPassword|textAutoComplete|textImeMultiLine|textPostalAddress|numberDecimal|textEmailAddress|numberPassword|textCapWords|phone|textEmailSubject|textCapCharacters|time|textWebPassword"
         android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView12"
         app:layout_constraintTop_toTopOf="@+id/textView12" />
 

@@ -35,31 +35,9 @@ public class ShowData extends AppCompatActivity {
     String temperature;
     String oximeter;
     String pulse;
+    String number;
     private ResultSet rs = null;
     private boolean run = true;
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    //显示数据
-                    try {
-                        tem.setText(rs.getString("temperature") + " ℃");
-                        oxi.setText(rs.getString("oxygen_content") + " %");
-                        pul.setText(rs.getString("pulse") + " bpm");
-                        time.setText(rs.getString("time"));
-                        name.setText(rs.getString("patient_name"));
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
 
     @Override
@@ -80,28 +58,8 @@ public class ShowData extends AppCompatActivity {
         showid.setText(id);
         CheckData();
         //检查数据是否异常
-
         handler.postDelayed(task, 1000 / 10);
     }
-
-//    public void ShowData(){
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Looper.prepare();
-//                try {
-//                    connection = DBOpenHelper.getConn();
-//                    String id = showid.getText().toString();
-//                    String sql = "SELECT * FROM patient_"+id+" a, patient b WHERE a.p_id = b.patient_id ORDER BY time DESC";
-//                    rs = DBOpenHelper.getQuery(connection, sql);
-//                    handler.sendEmptyMessage(1);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                Looper.loop();
-//            }
-//        }).start();
-//    }
 
     //血氧异常通知
     public void CheckData(){
@@ -123,13 +81,17 @@ public class ShowData extends AppCompatActivity {
                         temperature = rs.getString("temperature");
                         oximeter = rs.getString("oxygen_content");
                         pulse = rs.getString("pulse");
-                        if (Double.parseDouble(oximeter) < 95) {
+                        number = rs.getString("contact_number");
+                        if (Double.parseDouble(oximeter) < 90) {
+                            //停止刷新数据
                             run = false;
+                            //传递数据到NotificationActivity
                             Intent intent1 = new Intent(ShowData.this, NotificationActivity.class);
                             intent1.putExtra("temperature" ,temperature);
                             intent1.putExtra("oximeter", oximeter);
                             intent1.putExtra("pulse", pulse);
-//                            PendingIntent pi = PendingIntent.getActivity(ShowData.this, 0, intent1, 0);
+                            intent1.putExtra("number", number);
+                            //创建数据通知
                             NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             Notification notification;
                             NotificationChannel channel = new NotificationChannel("1", "description", NotificationManager.IMPORTANCE_HIGH);
@@ -142,7 +104,6 @@ public class ShowData extends AppCompatActivity {
                                     .setWhen(System.currentTimeMillis())
                                     .setVibrate(new long[]{0, 1000, 1000, 1000})
                                     .setAutoCancel(true)
-//                                    .setContentIntent(pi)
                                     .build();
                             manager.notify(1, notification);
                             startActivity(intent1);
@@ -187,6 +148,30 @@ public class ShowData extends AppCompatActivity {
                 CheckData();
                 DBOpenHelper.closeAll(connection);
                 handler.postDelayed(this, 1000*5);
+            }
+        }
+    };
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    //显示数据
+                    try {
+                        tem.setText(rs.getString("temperature") + " ℃");
+                        oxi.setText(rs.getString("oxygen_content") + " %");
+                        pul.setText(rs.getString("pulse") + " bpm");
+                        time.setText(rs.getString("time"));
+                        name.setText(rs.getString("patient_name"));
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     };

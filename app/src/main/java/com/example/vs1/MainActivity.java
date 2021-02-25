@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.login:
                 String name = nameText.getText().toString();
                 new Thread(new Runnable() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void run() {
                         Looper.prepare();
@@ -91,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         handler.sendEmptyMessage(12);
                         DBOpenHelper.closeAll(connection);
                         Looper.loop();
+                        MainActivity.this.finish();
                     }
                 }).start();
                 break;

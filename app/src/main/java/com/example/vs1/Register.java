@@ -28,6 +28,7 @@ public class Register extends AppCompatActivity {
     TextView id;
     EditText genderText;
     EditText ageText;
+    EditText numberText;
     ResultSet rs;
     ResultSet rs1;
     ProgressBar progressBar;
@@ -64,6 +65,7 @@ public class Register extends AppCompatActivity {
         nameText = findViewById(R.id.name_new);
         genderText = findViewById(R.id.gender_new);
         ageText = findViewById(R.id.age_new);
+        numberText = findViewById(R.id.number_new);
         progressBar = findViewById(R.id.progressBar_register);
         progressBar.setVisibility(View.GONE);
         register.setOnClickListener(v -> new Thread(new Runnable() {
@@ -73,6 +75,7 @@ public class Register extends AppCompatActivity {
                 String name = nameText.getText().toString();
                 String gender = genderText.getText().toString();
                 String age = ageText.getText().toString();
+                String number = numberText.getText().toString();
                 if (name.equals("")) {
                     Toast.makeText(Register.this, "Please enter your name", Toast.LENGTH_LONG).show();
                 } else {
@@ -82,13 +85,14 @@ public class Register extends AppCompatActivity {
                         if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
                             Toast.makeText(Register.this, "The name already exists", Toast.LENGTH_LONG).show();
                         } else {
-                            String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age)\n" +
+                            String sql1 = "INSERT INTO patient ( patient_id, patient_name, patient_gender, patient_age, contact_number)\n" +
                                     "VALUES\n" +
-                                    "( null, ?, ?, ?)";
+                                    "( null, ?, ?, ?, ?)";
                             PreparedStatement ps1 = (PreparedStatement) connection.prepareStatement(sql1);
                             ps1.setString(1, name);
                             ps1.setString(2, gender);
                             ps1.setString(3, age);
+                            ps1.setString(4, number);
                             ps1.executeUpdate();
                             //sql添加数据语句
                             if (DBOpenHelper.getExit(connection, "patient_name", name) == 1) {
