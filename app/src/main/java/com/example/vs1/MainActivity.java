@@ -1,6 +1,7 @@
 package com.example.vs1;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         progressBar = findViewById(R.id.progressBar_main);
         progressBar.setVisibility(View.GONE);
 
+        Intent intent = new Intent(getApplicationContext(), LongRunningService.class);
+        getApplicationContext().startService(intent);
+
         login.setOnClickListener(this);
         reg.setOnClickListener(this);
     }
@@ -71,12 +76,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
                                     connection = DBOpenHelper.getConn();
                                     //获取id
-                                    String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
+                                    String sql = "SELECT * FROM patient WHERE patient_name='" + name + "'";
                                     rs = DBOpenHelper.getQuery(connection, sql);
                                     String id = rs.getString("patient_id");
+                                    String number = rs.getString("contact_number");
                                     //传递id到下一页
                                     Intent intent = new Intent(MainActivity.this, ShowData.class);
                                     intent.putExtra("idText", id);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("number", number);
                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this, "Please register first", Toast.LENGTH_LONG).show();
@@ -96,7 +104,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.reg:
                 Intent intent = new Intent(MainActivity.this, Register.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    String name = data.getStringExtra("name");
+                    nameText.setText(name);
+                }
                 break;
             default:
                 break;

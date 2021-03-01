@@ -11,6 +11,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -32,21 +33,27 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-
         tem2 = findViewById(R.id.tem2);
         oxi2 = findViewById(R.id.oxi2);
         pul2 = findViewById(R.id.pul2);
         send = findViewById(R.id.send);
 
-        Intent intent = getIntent();
-        String tem = intent.getStringExtra("temperature");
-        String oxi = intent.getStringExtra("oximeter");
-        String pul = intent.getStringExtra("pulse");
-        String number = intent.getStringExtra("number");
+        User user = (User) getIntent().getSerializableExtra("user");
+        String tem = user.getTem();
+        String oxi = user.getOxi();
+        String pul = user.getPul();
+        String number = user.getNumber();
 
-        tem2.setText(tem);
-        oxi2.setText(oxi);
-        pul2.setText(pul);
+        tem2.setText(tem + " ℃");
+        oxi2.setText(oxi + " %");
+        pul2.setText(pul + " bpm");
+
+        if (Double.parseDouble(oxi)<90) {
+            oxi2.setTextColor(Color.parseColor("#FF0000"));
+        }
+        if (tem!=null && Double.parseDouble(tem)>37.3) {
+            tem2.setTextColor(Color.parseColor("#FF0000"));
+        }
 
         send.setOnClickListener(v -> {
             String message = "Abnormal signs detected.\n" + "Temperature:" + tem + "℃  SaO2:" + oxi + "%  pulse:" + pul + "rpm";
@@ -54,15 +61,19 @@ public class NotificationActivity extends AppCompatActivity {
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(NotificationActivity.this, new String[]{Manifest.permission.SEND_SMS}, 0);
             }
-            try {
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage( number, null, message, null, null);
-                Toast.makeText(NotificationActivity.this, "SMS sent.", Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                Toast.makeText(NotificationActivity.this,
-                        "SMS failed, please try again.",
-                        Toast.LENGTH_LONG).show();
-                e.printStackTrace();
+            if (number == null) {
+                Toast.makeText(this, "No contact phone set.", Toast.LENGTH_LONG).show();
+            } else {
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(number, null, message, null, null);
+                    Toast.makeText(NotificationActivity.this, "SMS sent.", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(NotificationActivity.this,
+                            "SMS failed, please try again.",
+                            Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
         });
 

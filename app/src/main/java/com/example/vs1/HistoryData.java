@@ -1,6 +1,7 @@
 package com.example.vs1;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +54,11 @@ public class HistoryData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_data);
+        //隐藏系统默认标题
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.hide();
+        }
         initUser();
         historyData = findViewById(R.id.historyData);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -75,7 +81,7 @@ public class HistoryData extends AppCompatActivity {
                     rs = ps.executeQuery();
                     if (rs != null) {
                         while (rs.next()){
-                            User u = new User(null, "00", null, null, null);
+                            User u = new User();
                             u.setId(rs.getString("p_id"));
                             u.setTem(rs.getString("temperature"));
                             u.setOxi(rs.getString("oxygen_content"));

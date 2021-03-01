@@ -1,19 +1,16 @@
 package com.example.vs1;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String id;
     private String tem;
     private String oxi;
     private String pul;
     private String time;
+    private String number;
+    private String name;
 
-    public User(String id, String tem, String oxi, String pul, String time) {
-        this.id = id;
-        this.tem = tem;
-        this.oxi = oxi;
-        this.pul = pul;
-        this.time = time;
-    }
 
     public String getId() {
         return id;
@@ -35,6 +32,14 @@ public class User {
         return time;
     }
 
+    public String getNumber() {
+        return number;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -53,5 +58,13 @@ public class User {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

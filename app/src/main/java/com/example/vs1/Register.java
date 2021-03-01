@@ -100,10 +100,15 @@ public class Register extends AppCompatActivity {
                                 String sql = "SELECT patient_id FROM patient WHERE patient_name='" + name + "'";
                                 rs1 = DBOpenHelper.getQuery(connection, sql);
                                 handler.sendEmptyMessage(1);
+
                             } else {
                                 Toast.makeText(Register.this, "Registration failed", Toast.LENGTH_LONG).show();
                             }
                         }
+                        Intent intent = new Intent();
+                        intent.putExtra("name", name);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
