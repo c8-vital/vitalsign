@@ -43,9 +43,10 @@ public class LongRunningService extends Service {
                 SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
                 String name = pref.getString("name", "null");
                 String id = pref.getString("id", "null");
+                String table = pref.getString("table", "null");
                 Looper.prepare();
                 //如果有本地user数据
-                if (!id.equals("null")) {
+                if (!id.equals("null") & !table.equals("null")) {
                     String timeN = TimeUtils.getNowTime();
                     String timeM = TimeUtils.getNowDate() + "08:00:00";
                     timeT = getTimeT(id);
@@ -53,14 +54,17 @@ public class LongRunningService extends Service {
                     String TD = TimeUtils.getTD(timeN, timeT);
                     String hours = null;
 
+
                     if (TD.startsWith("h", 1)) {
                         hours = TD.substring(0, 1);
-                    }
-                    if (TD.startsWith("h", 2)) {
+                    } else if (TD.startsWith("h", 2)) {
                         hours = TD.substring(0, 2);
-                    }
-                    if (TD.startsWith("h", 3)) {
+                    } else if (TD.startsWith("h", 3)) {
                         hours = TD.substring(0, 3);
+                    } else if (TD.startsWith("h", 4)) {
+                        hours = TD.substring(0, 4);
+                    } else if (TD.startsWith("h", 5)) {
+                        hours = TD.substring(0, 5);
                     }
                     //判断现在时间是否早于8:00:00
                     if (TimeUtils.isDateOneBigger(timeM, timeN)) {
@@ -75,7 +79,6 @@ public class LongRunningService extends Service {
                             Toast.makeText(getApplicationContext(), "User:"+ name + "\n"+ TD + " have passed since the last measurement.", Toast.LENGTH_LONG).show();
                         }
                     }
-
 
                 }
 

@@ -131,9 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void save(String inputText) {
 
-    }
 
     private Handler handler = new Handler() {
         @Override

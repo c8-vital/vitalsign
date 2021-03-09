@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -95,21 +96,25 @@ public class ShowData extends AppCompatActivity {
                     if (rs == null) {//判断是否存在patient_id表
                         Toast.makeText(ShowData.this, "No data available", Toast.LENGTH_LONG).show();
                         System.out.println("No data available");
+                        //停止后台Service
+                        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                        editor.putString("table", "null");
+                        editor.apply();
+                        run = false;
                     } else {
-                        user.setId(rs.getString("p_id"));
-                        user.setTem(rs.getString("temperature"));
-                        user.setOxi(rs.getString("oxygen_content"));
-                        user.setPul(rs.getString("pulse"));
-                        user.setTime(rs.getString("time"));
-                        user.setName(name1);
-                        user.setNumber(number);
-                        handler.sendEmptyMessage(1);
+                        //开启后台Service
+                        SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                        editor.putString("table", "exist");
+                        editor.apply();
 
+                        setUser();
+                        handler.sendEmptyMessage(1);
                         if (Double.parseDouble(user.getOxi()) < 90) {
                             //停止刷新数据
                             run = false;
                             sendNotification();
                         }
+                        upLoadData();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -146,7 +151,54 @@ public class ShowData extends AppCompatActivity {
                 .build();
         manager.notify(1, notification);
 
+        //上传异常数据至staff表
+
+
     }
+
+
+    public void upLoadData() {
+        try {
+            do {
+                setUser();
+                String sql = "INSERT INTO worker_" + user.getStaff() + " ( patient_id, patient_name, time, oxygen_content, pulse, temperature)\n" +
+                        "SELECT\n" +
+                        " ?, ?, ?, ?, ?, ?\n" +
+                        "FROM dual\n" +
+                        "WHERE NOT EXISTS (select * from worker_" + user.getStaff() + " \n" +
+                        "WHERE patient_id = '"+user.getId()+"' AND time = '"+user.getTime()+"')";
+                PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getTime());
+                ps.setString(4, user.getOxi());
+                ps.setString(5, user.getPul());
+                ps.setString(6, user.getTem());
+                if (Double.parseDouble(user.getOxi()) < 90) {
+                    ps.executeUpdate();
+                }
+            } while (rs.next());
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setUser() {
+        try {
+            user.setId(rs.getString("p_id"));
+            user.setTem(rs.getString("temperature"));
+            user.setOxi(rs.getString("oxygen_content"));
+            user.setPul(rs.getString("pulse"));
+            user.setTime(rs.getString("time"));
+            user.setName(name1);
+            user.setNumber(number);
+            user.setStaff(rs.getString("staff"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //设置右上角菜单
     @Override

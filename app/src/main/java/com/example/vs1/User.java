@@ -10,6 +10,7 @@ public class User implements Serializable {
     private String time;
     private String number;
     private String name;
+    private String staff;
 
 
     public String getId() {
@@ -40,6 +41,10 @@ public class User implements Serializable {
         return name;
     }
 
+    public String getStaff() {
+        return staff;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -66,5 +71,9 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setStaff(String staff) {
+        this.staff = staff;
     }
 }
