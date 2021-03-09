@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
@@ -17,8 +18,13 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+
 public class LongRunningService extends Service {
+    String timeT;
     public LongRunningService() {
+
     }
 
     @Override
@@ -29,24 +35,63 @@ public class LongRunningService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         new Thread(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
+                SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+                String name = pref.getString("name", "null");
+                String id = pref.getString("id", "null");
                 Looper.prepare();
-//                Toast.makeText(getApplicationContext(), "123123", Toast.LENGTH_LONG).show();
-                sendNotification();
+                //如果有本地user数据
+                if (!id.equals("null")) {
+                    String timeN = TimeUtils.getNowTime();
+                    String timeM = TimeUtils.getNowDate() + "08:00:00";
+                    timeT = getTimeT(id);
+//                    timeT = "2021-03-08 06:00:00";
+                    String TD = TimeUtils.getTD(timeN, timeT);
+                    String hours = null;
+
+                    if (TD.startsWith("h", 1)) {
+                        hours = TD.substring(0, 1);
+                    }
+                    if (TD.startsWith("h", 2)) {
+                        hours = TD.substring(0, 2);
+                    }
+                    if (TD.startsWith("h", 3)) {
+                        hours = TD.substring(0, 3);
+                    }
+                    //判断现在时间是否早于8:00:00
+                    if (TimeUtils.isDateOneBigger(timeM, timeN)) {
+                        //早于8:00:00
+                        if (Integer.parseInt(hours) >= 12) {
+                            sendNotification();
+                            Toast.makeText(getApplicationContext(), "User:"+ name + "\n"+ TD + " have passed since the last measurement.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        if (Integer.parseInt(hours) >= 6) {
+                            sendNotification();
+                            Toast.makeText(getApplicationContext(), "User:"+ name + "\n"+ TD + " have passed since the last measurement.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+
+                }
+
                 Looper.loop();
             }
         }).start();
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 60*60*1000;   //一小时的毫秒数
+        int anHour = 5*60*1000;   //5mins的毫秒数
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent i = new Intent(this, LongRunningService.class);
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
         manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pi);
         return super.onStartCommand(intent, flags, startId);
     }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendNotification() {
@@ -68,4 +113,23 @@ public class LongRunningService extends Service {
         manager.notify(2, notification);
 
     }
+
+    public String getTimeT(String id) {
+            try {
+                Connection connection = DBOpenHelper.getConn();
+                String sql = "SELECT * FROM patient_"+id+" ORDER BY time DESC";
+                ResultSet rs = DBOpenHelper.getQuery(connection, sql);
+                if (rs != null) {//判断是否存在patient_id表
+                    timeT = rs.getString("time");
+                } else {
+                    Toast.makeText(getApplicationContext(), "user_id:"+id+" no data.", Toast.LENGTH_LONG).show();
+                }
+                DBOpenHelper.closeAll(connection);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return timeT;
+    }
+
+
 }

@@ -34,22 +34,6 @@ public class HistoryData extends AppCompatActivity {
     ArrayList<User> list = new ArrayList<User>();
 
 
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 1:
-                    UserAdapter adapter = new UserAdapter(list);
-                    historyData.setAdapter(adapter);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,4 +86,20 @@ public class HistoryData extends AppCompatActivity {
         }).start();
 
     }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    UserAdapter adapter = new UserAdapter(list);
+                    historyData.setAdapter(adapter);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
 }

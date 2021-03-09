@@ -45,7 +45,7 @@ public class DBOpenHelper {
         try {
             String sql = "SELECT "+patientType+" FROM patient WHERE "+patientType+"=?";
             PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
-            ps.setString(1,patientInfo);
+            ps.setString(1, patientInfo);
             rs = ps.executeQuery();
             if (rs.next()) {
                 return 1;

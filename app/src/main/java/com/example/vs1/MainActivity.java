@@ -11,6 +11,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 
@@ -65,41 +68,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.login:
                 String name = nameText.getText().toString();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        try {
-                            if (!nameText.equals("")) {//判断输入框中是否有数据
-                                handler.sendEmptyMessage(11);
+                new Thread(() -> {
+                    Looper.prepare();
+                    try {
+                        if (!nameText.equals("")) {//判断输入框中是否有数据
+                            handler.sendEmptyMessage(11);
+                            connection = DBOpenHelper.getConn();
+                            if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
                                 connection = DBOpenHelper.getConn();
-                                if (DBOpenHelper.getExit(connection, "patient_name", name)==1) {
-                                    connection = DBOpenHelper.getConn();
-                                    //获取id
-                                    String sql = "SELECT * FROM patient WHERE patient_name='" + name + "'";
-                                    rs = DBOpenHelper.getQuery(connection, sql);
-                                    String id = rs.getString("patient_id");
-                                    String number = rs.getString("contact_number");
-                                    //传递id到下一页
-                                    Intent intent = new Intent(MainActivity.this, ShowData.class);
-                                    intent.putExtra("idText", id);
-                                    intent.putExtra("name", name);
-                                    intent.putExtra("number", number);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(MainActivity.this, "Please register first", Toast.LENGTH_LONG).show();
-                                }
+                                //获取id
+                                String sql = "SELECT * FROM patient WHERE patient_name='" + name + "'";
+                                rs = DBOpenHelper.getQuery(connection, sql);
+                                String id = rs.getString("patient_id");
+                                String number = rs.getString("contact_number");
+                                //存储用户信息到本地
+                                SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                                editor.putString("name", name);
+                                editor.putString("id", id);
+                                editor.apply();
+                                //传递id到下一页
+                                Intent intent = new Intent(MainActivity.this, ShowData.class);
+                                intent.putExtra("idText", id);
+                                intent.putExtra("name", name);
+                                intent.putExtra("number", number);
+                                startActivity(intent);
                             } else {
-                                Toast.makeText(MainActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Please register first", Toast.LENGTH_LONG).show();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
                         }
-                        handler.sendEmptyMessage(12);
-                        DBOpenHelper.closeAll(connection);
-                        Looper.loop();
-                        MainActivity.this.finish();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    handler.sendEmptyMessage(12);
+                    DBOpenHelper.closeAll(connection);
+                    Looper.loop();
+                    MainActivity.this.finish();
                 }).start();
                 break;
             case R.id.reg:
@@ -124,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    public void save(String inputText) {
+
     }
 
     private Handler handler = new Handler() {
