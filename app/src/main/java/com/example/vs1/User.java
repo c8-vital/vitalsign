@@ -11,7 +11,8 @@ public class User implements Serializable {
     private String number;
     private String name;
     private String staff;
-
+    private String gender;
+    private String age;
 
     public String getId() {
         return id;
@@ -45,6 +46,14 @@ public class User implements Serializable {
         return staff;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -75,5 +84,13 @@ public class User implements Serializable {
 
     public void setStaff(String staff) {
         this.staff = staff;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setAge(String age) {
+        this.gender = age;
     }
 }

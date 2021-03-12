@@ -50,41 +50,36 @@ public class HistoryData extends AppCompatActivity {
     }
 
     private void initUser(){
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                //接收ShowData的id
-                Intent intent2 = getIntent();
-                String idText = intent2.getStringExtra("idText");
-                try {
-                    String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,50";
-                    connection = DBOpenHelper.getConn();
-                    ps = connection.prepareStatement(sql);
-                    rs = ps.executeQuery();
-                    if (rs != null) {
-                        while (rs.next()){
-                            User u = new User();
-                            u.setId(rs.getString("p_id"));
-                            u.setTem(rs.getString("temperature"));
-                            u.setOxi(rs.getString("oxygen_content"));
-                            u.setPul(rs.getString("pulse"));
-                            u.setTime(rs.getString("time"));
-                            list.add(u);
-                        }
-                        handler.sendEmptyMessage(1);
-                    } else {
-                        Toast.makeText(HistoryData.this, "No data available", Toast.LENGTH_LONG).show();
+        new Thread(() -> {
+            Looper.prepare();
+            //接收ShowData的id
+            Intent intent2 = getIntent();
+            String idText = intent2.getStringExtra("idText");
+            try {
+                String sql = "SELECT * FROM patient_"+idText+" ORDER BY time DESC LIMIT 0,50";
+                connection = DBOpenHelper.getConn();
+                ps = connection.prepareStatement(sql);
+                rs = ps.executeQuery();
+                if (rs != null) {
+                    while (rs.next()){
+                        User u = new User();
+                        u.setId(rs.getString("p_id"));
+                        u.setTem(rs.getString("temperature"));
+                        u.setOxi(rs.getString("oxygen_content"));
+                        u.setPul(rs.getString("pulse"));
+                        u.setTime(rs.getString("time"));
+                        list.add(u);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    handler.sendEmptyMessage(1);
+                } else {
+                    Toast.makeText(HistoryData.this, "No data available", Toast.LENGTH_LONG).show();
                 }
-                DBOpenHelper.closeAll(connection);
-                Looper.loop();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            DBOpenHelper.closeAll(connection);
+            Looper.loop();
         }).start();
-
     }
 
     private Handler handler = new Handler(){

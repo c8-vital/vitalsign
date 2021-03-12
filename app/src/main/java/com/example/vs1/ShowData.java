@@ -151,12 +151,10 @@ public class ShowData extends AppCompatActivity {
                 .build();
         manager.notify(1, notification);
 
-        //上传异常数据至staff表
-
-
     }
 
 
+    //上传异常数据至staff表
     public void upLoadData() {
         try {
             do {
